@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"Remove-Item -Path ''c:\\Users\\acer\\Documents\\Project Template\\Golang\\golang-clean-architecture\\internal\\gateway\\messaging'' -Recurse -Force\")",
+      "Bash(powershell:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(go build:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(go get:*)",
+      "Bash(go install:*)",
+      "Bash(swag init:*)",
+      "Bash(go list:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

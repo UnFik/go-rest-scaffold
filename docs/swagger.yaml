@@ -1,0 +1,987 @@
+basePath: /api
+definitions:
+  model.AddressResponse:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      created_at:
+        type: integer
+      id:
+        type: string
+      postal_code:
+        type: string
+      province:
+        type: string
+      street:
+        type: string
+      updated_at:
+        type: integer
+    type: object
+  model.ContactResponse:
+    properties:
+      addresses:
+        items:
+          $ref: '#/definitions/model.AddressResponse'
+        type: array
+      created_at:
+        type: integer
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      phone:
+        type: string
+      updated_at:
+        type: integer
+    type: object
+  model.CreateAddressRequest:
+    properties:
+      city:
+        maxLength: 255
+        type: string
+      country:
+        maxLength: 100
+        type: string
+      postal_code:
+        maxLength: 10
+        type: string
+      province:
+        maxLength: 255
+        type: string
+      street:
+        maxLength: 255
+        type: string
+    type: object
+  model.CreateContactRequest:
+    properties:
+      email:
+        maxLength: 200
+        type: string
+      first_name:
+        maxLength: 100
+        type: string
+      last_name:
+        maxLength: 100
+        type: string
+      phone:
+        maxLength: 20
+        type: string
+    required:
+    - first_name
+    type: object
+  model.LoginUserRequest:
+    properties:
+      id:
+        maxLength: 100
+        type: string
+      password:
+        maxLength: 100
+        type: string
+    required:
+    - id
+    - password
+    type: object
+  model.PageMetadata:
+    properties:
+      page:
+        type: integer
+      size:
+        type: integer
+      total_item:
+        type: integer
+      total_page:
+        type: integer
+    type: object
+  model.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        maxLength: 100
+        type: string
+    required:
+    - refresh_token
+    type: object
+  model.RegisterUserRequest:
+    properties:
+      id:
+        maxLength: 100
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      password:
+        maxLength: 100
+        type: string
+    required:
+    - id
+    - name
+    - password
+    type: object
+  model.UpdateAddressRequest:
+    properties:
+      city:
+        maxLength: 255
+        type: string
+      country:
+        maxLength: 100
+        type: string
+      postal_code:
+        maxLength: 10
+        type: string
+      province:
+        maxLength: 255
+        type: string
+      street:
+        maxLength: 255
+        type: string
+    type: object
+  model.UpdateContactRequest:
+    properties:
+      email:
+        maxLength: 200
+        type: string
+      first_name:
+        maxLength: 100
+        type: string
+      last_name:
+        maxLength: 100
+        type: string
+      phone:
+        maxLength: 20
+        type: string
+    required:
+    - first_name
+    type: object
+  model.UpdateUserRequest:
+    properties:
+      name:
+        maxLength: 100
+        type: string
+      password:
+        maxLength: 100
+        type: string
+    type: object
+  model.UserResponse:
+    properties:
+      created_at:
+        type: integer
+      id:
+        type: string
+      name:
+        type: string
+      refresh_token:
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: integer
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: RESTful API for managing users, contacts, and addresses with clean
+    architecture principles.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Golang Clean Architecture API
+  version: "1.0"
+paths:
+  /contacts:
+    get:
+      consumes:
+      - application/json
+      description: Search and list contacts for the authenticated user with pagination
+      parameters:
+      - description: Filter by name
+        in: query
+        name: name
+        type: string
+      - description: Filter by email
+        in: query
+        name: email
+        type: string
+      - description: Filter by phone
+        in: query
+        name: phone
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 10
+        description: Page size
+        in: query
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of contacts with pagination
+          schema:
+            properties:
+              data:
+                items:
+                  $ref: '#/definitions/model.ContactResponse'
+                type: array
+              paging:
+                $ref: '#/definitions/model.PageMetadata'
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List contacts
+      tags:
+      - contacts
+    post:
+      consumes:
+      - application/json
+      description: Create a new contact for the authenticated user
+      parameters:
+      - description: Contact creation details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateContactRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created contact
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.ContactResponse'
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new contact
+      tags:
+      - contacts
+  /contacts/{contactId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific contact by ID for the authenticated user
+      parameters:
+      - description: Contact ID
+        in: path
+        name: contactId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted contact
+          schema:
+            properties:
+              data:
+                type: boolean
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "404":
+          description: Contact not found
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete a contact
+      tags:
+      - contacts
+    get:
+      consumes:
+      - application/json
+      description: Get a specific contact by ID for the authenticated user
+      parameters:
+      - description: Contact ID
+        in: path
+        name: contactId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Contact details
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.ContactResponse'
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "404":
+          description: Contact not found
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get a contact
+      tags:
+      - contacts
+    put:
+      consumes:
+      - application/json
+      description: Update a specific contact by ID for the authenticated user
+      parameters:
+      - description: Contact ID
+        in: path
+        name: contactId
+        required: true
+        type: string
+      - description: Contact update details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateContactRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated contact
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.ContactResponse'
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "404":
+          description: Contact not found
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update a contact
+      tags:
+      - contacts
+  /contacts/{contactId}/addresses:
+    get:
+      consumes:
+      - application/json
+      description: Get all addresses for a specific contact
+      parameters:
+      - description: Contact ID
+        in: path
+        name: contactId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of addresses
+          schema:
+            properties:
+              data:
+                items:
+                  $ref: '#/definitions/model.AddressResponse'
+                type: array
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "404":
+          description: Contact not found
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List addresses
+      tags:
+      - addresses
+    post:
+      consumes:
+      - application/json
+      description: Create a new address for a specific contact
+      parameters:
+      - description: Contact ID
+        in: path
+        name: contactId
+        required: true
+        type: string
+      - description: Address creation details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateAddressRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created address
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.AddressResponse'
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "404":
+          description: Contact not found
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new address
+      tags:
+      - addresses
+  /contacts/{contactId}/addresses/{addressId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific address by ID for a contact
+      parameters:
+      - description: Contact ID
+        in: path
+        name: contactId
+        required: true
+        type: string
+      - description: Address ID
+        in: path
+        name: addressId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully deleted address
+          schema:
+            properties:
+              data:
+                type: boolean
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "404":
+          description: Address not found
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete an address
+      tags:
+      - addresses
+    get:
+      consumes:
+      - application/json
+      description: Get a specific address by ID for a contact
+      parameters:
+      - description: Contact ID
+        in: path
+        name: contactId
+        required: true
+        type: string
+      - description: Address ID
+        in: path
+        name: addressId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Address details
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.AddressResponse'
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "404":
+          description: Address not found
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get an address
+      tags:
+      - addresses
+    put:
+      consumes:
+      - application/json
+      description: Update a specific address by ID for a contact
+      parameters:
+      - description: Contact ID
+        in: path
+        name: contactId
+        required: true
+        type: string
+      - description: Address ID
+        in: path
+        name: addressId
+        required: true
+        type: string
+      - description: Address update details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateAddressRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated address
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.AddressResponse'
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "404":
+          description: Address not found
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update an address
+      tags:
+      - addresses
+  /users:
+    delete:
+      consumes:
+      - application/json
+      description: Logout the currently authenticated user and invalidate token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully logged out
+          schema:
+            properties:
+              data:
+                type: boolean
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: User logout
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account with ID, name, and password
+      parameters:
+      - description: User registration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully registered user
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.UserResponse'
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - users
+  /users/_current:
+    get:
+      consumes:
+      - application/json
+      description: Get the currently authenticated user's information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Current user information
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.UserResponse'
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get current user
+      tags:
+      - users
+    patch:
+      consumes:
+      - application/json
+      description: Update the currently authenticated user's information (name and/or
+        password)
+      parameters:
+      - description: User update details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated user
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.UserResponse'
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update current user
+      tags:
+      - users
+  /users/_login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and receive access token
+      parameters:
+      - description: User login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully logged in with token
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.UserResponse'
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "401":
+          description: Invalid credentials
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      summary: User login
+      tags:
+      - users
+  /users/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Get a new access token using a valid refresh token
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: New access token
+          schema:
+            properties:
+              data:
+                $ref: '#/definitions/model.UserResponse'
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "401":
+          description: Invalid refresh token
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            properties:
+              errors:
+                type: string
+            type: object
+      summary: Refresh access token
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    description: 'API token authentication. Format: your-token-here (without "Bearer"
+      prefix)'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
