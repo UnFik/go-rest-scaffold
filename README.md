@@ -87,7 +87,7 @@ RESTful API built with clean architecture principles for managing users, contact
 
 ```bash
 git clone <repository-url>
-cd golang-clean-architecture
+cd go-rest-scaffold
 ```
 
 ### 2. Install dependencies
@@ -122,7 +122,7 @@ All configuration is in `config.json` file:
 ```json
 {
   "app": {
-    "name": "golang-clean-architecture"
+    "name": "go-rest-scaffold"
   },
   "web": {
     "prefork": false,
@@ -269,7 +269,7 @@ This will generate a coverage report in `coverage.html`
 ## 📁 Project Structure
 
 ```
-golang-clean-architecture/
+go-rest-scaffold/
 │
 ├── cmd/                                    # Application entry points
 │   └── web/

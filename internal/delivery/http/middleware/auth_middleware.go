@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"golang-clean-architecture/internal/model"
-	"golang-clean-architecture/internal/usecase"
+	"go-rest-scaffold/internal/model"
+	"go-rest-scaffold/internal/usecase"
 
 	"github.com/gofiber/fiber/v2"
 )

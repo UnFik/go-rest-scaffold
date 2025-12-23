@@ -9,7 +9,7 @@ ifneq (,$(wildcard ./.env))
 endif
 
 # Variables
-APP_NAME=golang-clean-architecture
+APP_NAME=go-rest-scaffold
 MAIN_PATH=cmd/web/main.go
 BUILD_DIR=build
 BINARY_NAME=app
@@ -43,6 +43,15 @@ help:
 	@echo "  make dev            - Run in development mode with hot reload"
 	@echo "  make lint           - Run linter"
 	@echo "  make fmt            - Format code"
+	@echo ""
+	@echo "Docker commands:"
+	@echo "  make docker-build   - Build Docker image"
+	@echo "  make docker-up      - Start all services (app + postgres)"
+	@echo "  make docker-up-build- Rebuild and start all services"
+	@echo "  make docker-down    - Stop all Docker services"
+	@echo "  make docker-logs    - View Docker logs"
+	@echo "  make docker-migrate - Run migrations in Docker"
+	@echo "  make docker-clean   - Remove Docker volumes and images"
 
 # Build aplikasi
 build:
@@ -150,14 +159,43 @@ build-prod:
 	@CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -ldflags="-w -s" -o $(BUILD_DIR)/$(BINARY_NAME)-windows-amd64.exe $(MAIN_PATH)
 	@echo "Production builds complete"
 
-# Docker commands (opsional jika ada Dockerfile)
+# Docker commands
 docker-build:
 	@echo "Building Docker image..."
 	@docker build -t $(APP_NAME):latest .
 
 docker-run:
 	@echo "Running Docker container..."
-	@docker run -p 3000:3000 $(APP_NAME):latest
+	@docker run -p 3000:3000 --env-file .env $(APP_NAME):latest
+
+docker-up:
+	@echo "Starting services with Docker Compose..."
+	@docker compose up -d
+
+docker-up-build:
+	@echo "Building and starting services with Docker Compose..."
+	@docker compose up -d --build
+
+docker-down:
+	@echo "Stopping Docker Compose services..."
+	@docker compose down
+
+docker-logs:
+	@echo "Showing Docker Compose logs..."
+	@docker compose logs -f
+
+docker-migrate:
+	@echo "Running database migrations in Docker..."
+	@docker compose --profile migrate up migrate
+
+docker-clean:
+	@echo "Cleaning Docker resources..."
+	@docker compose down -v --rmi local
+	@echo "Docker resources cleaned"
+
+docker-shell:
+	@echo "Opening shell in app container..."
+	@docker compose exec app sh
 
 # Database commands
 db-create:

@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"golang-clean-architecture/internal/entity"
-	"golang-clean-architecture/internal/model"
+	"go-rest-scaffold/internal/entity"
+	"go-rest-scaffold/internal/model"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"

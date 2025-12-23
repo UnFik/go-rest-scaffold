@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"golang-clean-architecture/internal/config"
+	"go-rest-scaffold/internal/config"
 
-	_ "golang-clean-architecture/docs"
+	_ "go-rest-scaffold/docs"
 )
 
 // @title           Golang Clean Architecture API

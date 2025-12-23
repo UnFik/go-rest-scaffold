@@ -1,0 +1,36 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Build artifacts
+build/
+tmp/
+*.exe
+
+# Test files
+test/
+coverage.out
+coverage.html
+
+# Documentation
+*.md
+*.png
+*.excalidraw
+docs/
+
+# Local config
+.env
+.air.toml
+
+# Claude/AI
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db

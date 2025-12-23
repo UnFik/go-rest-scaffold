@@ -1,7 +1,7 @@
 package route
 
 import (
-	"golang-clean-architecture/internal/delivery/http"
+	"go-rest-scaffold/internal/delivery/http"
 
 	"github.com/gofiber/fiber/v2"
 	fiberSwagger "github.com/swaggo/fiber-swagger"

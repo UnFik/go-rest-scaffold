@@ -2,7 +2,7 @@ package test
 
 import (
 	"encoding/json"
-	"golang-clean-architecture/internal/model"
+	"go-rest-scaffold/internal/model"
 	"io"
 	"net/http"
 	"net/http/httptest"

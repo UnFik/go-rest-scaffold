@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "golang-clean-architecture"
+    "name": "go-rest-scaffold"
   },
   "web": {
     "prefork": false,

@@ -1,4 +1,4 @@
-module golang-clean-architecture
+module go-rest-scaffold
 
 go 1.25.0
 
