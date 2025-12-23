@@ -46,12 +46,15 @@ RUN chown -R appuser:appuser /app
 # Switch to non-root user
 USER appuser
 
-# Expose the application port
-EXPOSE 3000
+# Environment variable for port (can be overridden)
+ENV APP_PORT=3000
 
-# Health check
+# Expose the application port (dynamic)
+EXPOSE ${APP_PORT}
+
+# Health check with dynamic port
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+    CMD sh -c 'wget --no-verbose --tries=1 --spider http://localhost:${APP_PORT}/api/health || exit 1'
 
 # Run the application
 CMD ["./main"]

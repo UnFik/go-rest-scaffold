@@ -29,5 +29,15 @@ func NewViper() *viper.Viper {
 		panic(fmt.Errorf("Fatal error config file: %w \n", err))
 	}
 
+	// Enable reading from environment variables
+	config.AutomaticEnv()
+
+	// Bind specific env vars to config keys
+	config.BindEnv("web.port", "APP_PORT")
+	config.BindEnv("app.name", "APP_NAME")
+
+	// Set defaults (fallback jika env tidak ada dan config.json tidak ada)
+	config.SetDefault("web.port", 3000)
+
 	return config
 }

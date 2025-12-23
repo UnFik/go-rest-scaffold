@@ -2,3 +2,23 @@
 /vendor
 *.exe
 .env
+.env.local
+
+# Build artifacts
+build/
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.html
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work

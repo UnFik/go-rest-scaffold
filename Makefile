@@ -15,6 +15,9 @@ BUILD_DIR=build
 BINARY_NAME=app
 MIGRATION_DIR=db/migrations
 
+# Application Configuration
+APP_PORT ?= 3000
+
 # Database Configuration
 # Default values if not set in .env
 DB_USER ?= postgres
@@ -165,8 +168,12 @@ docker-build:
 	@docker build -t $(APP_NAME):latest .
 
 docker-run:
-	@echo "Running Docker container..."
-	@docker run -p 3000:3000 --env-file .env $(APP_NAME):latest
+	@echo "Running Docker container on port $(APP_PORT)..."
+	@docker run -p $(APP_PORT):$(APP_PORT) \
+		-e APP_PORT=$(APP_PORT) \
+		-e APP_NAME=$(APP_NAME) \
+		--env-file .env \
+		$(APP_NAME):latest
 
 docker-up:
 	@echo "Starting services with Docker Compose..."
